@@ -1,7 +1,10 @@
 # Image caption generator using Chainer
 
+Python 3 and ResNet feature version by @milhidaka
+
 # Requirement
 
+* Python 3
 * [Chainer 2.0.0](http://chainer.org/)
 * [Cupy 1.0.0](http://docs.cupy.chainer.org/en/stable/)
 * [Pillow](https://pypi.python.org/pypi/Pillow/)
@@ -10,9 +13,10 @@
 
 ## Download dataset
 
-1. Download flickr8k.zip, flickr30k.zip, or coco.zip from:
+1. Download images (2014) from http://mscoco.org/dataset/#download and extract to some directory.
+1. Download [caption_datasets.zip](http://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip) from:
 http://cs.stanford.edu/people/karpathy/deepimagesent/
-1. Extract downloaded zip file, and you'll get dataset.json and vgg_feats.mat.
+1. Extract downloaded zip file, and you'll get dataset.json.
 
 ## Convert dataset
 
@@ -37,16 +41,6 @@ Options:
 * -m, --model: (optional) input model file path without extension.
 * -o, --output: (required) output model file path without extension.
 * --iter: (optional) the number of iterations (default: 100).
-
-## Convert VGG 19-layer caffemodel to pkl file
-
-```
-$ python src/convert_caffemodel_to_pkl.py VGG_ILSVRC_19_layers.caffemodel vgg19.pkl
-```
-
-Parameters:
-* caffe model file path.
-* output pkl file path.
 
 ## Generate image caption
 

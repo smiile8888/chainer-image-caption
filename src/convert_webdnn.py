@@ -41,14 +41,11 @@ from webdnn.graph.operators.elementwise_mul import ElementwiseMul
 from webdnn.graph.operators.elementwise_sum import ElementwiseSum
 from webdnn.graph.operators.linear import Linear
 from webdnn.graph.operators.lstm import LSTM
-from webdnn.graph.order import OrderNC, OrderNCHW, OrderC, OrderNHWC, OrderCNHW, Order, OrderCN, OrderHWNC, OrderHWCN, \
-    OrderNTC, OrderNT
+from webdnn.graph.operators.softmax import Softmax
+from webdnn.graph.order import OrderNC, OrderC, OrderCN, OrderNTC, OrderNT
 from webdnn.graph.variable import Variable
-from webdnn.graph.variables.attributes.input import Input
-from webdnn.graph.variables.attributes.output import Output
 from webdnn.graph.variables.constant_variable import ConstantVariable
 from webdnn.graph.operators.embedding import Embedding
-from webdnn.graph.operators.scalar_affine import ScalarAffine
 from webdnn.frontend.chainer import ChainerConverter
 from webdnn.util import console
 
@@ -107,11 +104,8 @@ def generate_graph_model2(caption_net, hidden_num):
                     activation="tanh", recurrent_activation="sigmoid",
                     use_initial_h=True, use_initial_c=True)
     w_input = _convert_lstm_to_webdnn_order(caption_net.lstm.upward.W.data.T)
-    print(w_input.shape)
     w_hidden = _convert_lstm_to_webdnn_order(caption_net.lstm.lateral.W.data.T)
-    print(w_hidden.shape)
     b = _convert_lstm_to_webdnn_order(caption_net.lstm.upward.b.data[None, :])[0]
-    print(b.shape)
     var_lstm_h, var_lstm_c = lstm_opr(x=var_lstm_input,
                                       w_input=ConstantVariable(w_input, OrderCN),
                                       w_hidden=ConstantVariable(w_hidden, OrderCN),
@@ -119,14 +113,13 @@ def generate_graph_model2(caption_net, hidden_num):
                                       initial_h=var_last_h, initial_c=var_last_c)
 
     # word probability
-    print(var_lstm_h)
-    print(caption_net.out_word.W.data.shape)
-    var_word_prob, = Linear(None)(var_lstm_h, ConstantVariable(caption_net.out_word.W.data.T, OrderCN))
-    var_word_prob_biased, = AxiswiseBias(None, axis=Axis.C)(var_word_prob,
-                                                            ConstantVariable(caption_net.out_word.b.data, OrderC))
+    var_word_score, = Linear(None)(var_lstm_h, ConstantVariable(caption_net.out_word.W.data.T, OrderCN))
+    var_word_score_biased, = AxiswiseBias(None, axis=Axis.C)(var_word_score,
+                                                             ConstantVariable(caption_net.out_word.b.data, OrderC))
+    var_word_prob, = Softmax(None, axis=Axis.C)(var_word_score_biased)
 
     return Graph([var_input_img, var_input_word, var_switch_img, var_switch_word, var_last_h, var_last_c],
-                 [var_word_prob_biased, var_lstm_h, var_lstm_c])
+                 [var_word_prob, var_lstm_h, var_lstm_c])
 
 
 def generate_example_io(caption_net, word_ids, image_path):
@@ -139,7 +132,8 @@ def generate_example_io(caption_net, word_ids, image_path):
     bos_raw_vec = chainer.Variable(np.array([[word_ids["<S>"]]], dtype=np.int32))
     bos_word_vec = caption_net.word_vec(bos_raw_vec)
     bos_lstm_output = caption_net.lstm(bos_word_vec)
-    bos_word_prob = caption_net.out_word(bos_lstm_output)
+    bos_word_score = caption_net.out_word(bos_lstm_output)
+    bos_word_prob = chainer.functions.softmax(bos_word_score)
     return {"input_img_embedded": input_img_embedded.data.flatten().tolist(),
             "image_lstm_output": image_lstm_output.data.flatten().tolist(),
             "bos_raw_vec": bos_raw_vec.data.flatten().tolist(),
@@ -151,7 +145,7 @@ def main():
     sys.setrecursionlimit(10000)  # workaround for deep copying large graph
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--backend", default="webgpu")
+    parser.add_argument("--backend", default="webgpu,webassembly")
     parser.add_argument("--encoding")
     parser.add_argument('--out', '-o', default='webdnn/image-caption-model',
                         help='Directory to output the graph descriptor')
@@ -167,13 +161,22 @@ def main():
     out_dir_graph1 = os.path.join(args.out, "image-feature")
     out_dir_graph2 = os.path.join(args.out, "caption-generation")
 
+    hidden_num = 512
     with open(args.sentence, 'rb') as f:
         sentence_dataset = pickle.load(f)
     word_ids = sentence_dataset['word_ids']
-    id_to_word = {v: k for k, v in word_ids.items()}
-
     word_num = len(word_ids)
-    hidden_num = 512
+    id_to_word = [""] * word_num
+    for k, v in word_ids.items():
+        id_to_word[v] = k
+
+    with open(os.path.join(args.out, "word_data.json"), "w") as f:
+        json.dump({"id_to_word": id_to_word,
+                   "bos_id": word_ids["<S>"],
+                   "eos_id": word_ids["</S>"],
+                   "word_num": word_num,
+                   "hidden_num": hidden_num}, f)
+
     caption_net = ImageCaption(word_num=word_num, feature_num=2048, hidden_num=hidden_num)
     chainer.serializers.load_hdf5(args.model, caption_net)
     graph1 = generate_graph_model1(caption_net)
