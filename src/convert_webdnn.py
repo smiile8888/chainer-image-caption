@@ -43,6 +43,7 @@ from webdnn.graph.operators.linear import Linear
 from webdnn.graph.operators.lstm import LSTM
 from webdnn.graph.operators.softmax import Softmax
 from webdnn.graph.order import OrderNC, OrderC, OrderCN, OrderNTC, OrderNT
+from webdnn.graph.traverse import dump_dot
 from webdnn.graph.variable import Variable
 from webdnn.graph.variables.constant_variable import ConstantVariable
 from webdnn.graph.operators.embedding import Embedding
@@ -154,6 +155,7 @@ def main():
     parser.add_argument('--model', '-m', required=True, type=str,
                         help='input model file path')
     parser.add_argument("--example_image", help="example image for comparing output")
+    parser.add_argument("--visualize_ir", action="store_true")
 
     args = parser.parse_args()
 
@@ -187,12 +189,18 @@ def main():
         with open(os.path.join(args.out, "example_io.json"), "w") as f:
             json.dump(example_io, f)
 
+    if args.visualize_ir:
+        ir_dot_path = os.path.join(args.out, "ir.dot")
+        with open(ir_dot_path, "w") as f:
+            f.write(dump_dot(graph2))
+        console.stderr(f"IR graph can be visualized with graphviz command: 'dot {ir_dot_path} -T png -o output.png'")
+
     any_backend_failed = False
     last_backend_exception = None
     for backend in args.backend.split(","):
         try:
-            #graph_exec_data = generate_descriptor(backend, graph1, constant_encoder_name=args.encoding)
-            #graph_exec_data.save(out_dir_graph1)
+            graph_exec_data = generate_descriptor(backend, graph1, constant_encoder_name=args.encoding)
+            graph_exec_data.save(out_dir_graph1)
             graph_exec_data = generate_descriptor(backend, graph2, constant_encoder_name=args.encoding)
             graph_exec_data.save(out_dir_graph2)
         except Exception as ex:
