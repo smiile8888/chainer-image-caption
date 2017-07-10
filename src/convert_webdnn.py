@@ -147,7 +147,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--backend", default="webgpu,webassembly")
-    parser.add_argument("--encoding")
+    parser.add_argument("--encoding", default="eightbit")
     parser.add_argument('--out', '-o', default='webdnn/image-caption-model',
                         help='Directory to output the graph descriptor')
     parser.add_argument('--sentence', '-s', required=True, type=str,

@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Caption generation demo</title>
-    <script src="./webdnn.js"></script>
-    <script src="./index.js"></script>
-  </head>
-  <body>
-    <canvas id="image" width="224" height="224"></canvas>
-    <button type="button" onclick="run(); return false;">Run</button><br>
-    <pre id="sentences"></pre>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Caption generation demo</title>
+  <script src="./inflate.min.js"></script>
+  <script src="./webdnn.js"></script>
+  <script src="./index.js"></script>
+  <style>
+    .progress {
+      margin-top: 10px;
+    }
+
+    #sentences {
+      font-size: large;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Generating image caption demo</h1>
+  Input image (can drag-drop image file):<br>
+  <canvas id="image" width="224" height="224"></canvas><br>
+  <button type="button" id="run_button" onclick="run(); return false;">Generate caption</button><br>
+  <div class="progress">
+    <span class="progress-item progress-item-0">1. Load models</span><br>
+    <span class="progress-item progress-item-1">2. Analyze image</span><br>
+    <span class="progress-item progress-item-2">3. Generate text</span><br>
+  </div>
+  <pre id="sentences">Generated caption will be shown here.</pre>
+</body>
+
 </html>

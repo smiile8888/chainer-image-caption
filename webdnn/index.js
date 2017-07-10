@@ -3,11 +3,31 @@
 let cap_gen;
 
 async function run() {
-  if (!cap_gen) {
-    await load_models();
+  document.getElementById('run_button').disabled = true;
+  try {
+    await set_progress(0);
+    if (!cap_gen) {
+      await load_models();
+    }
+    await run_generation();
+    //await run_sample_data();
+  } catch (ex) {
+    alert('Failed: ' + ex);
+    throw ex;
+  } finally {
+    document.getElementById('run_button').disabled = false;
   }
-  //await run_generation();
-  await run_sample_data();
+}
+
+function set_progress(performing) {
+  for (let i = 0; i < 3; i++) {
+    let color = i > performing ? 'white' : (i < performing ? 'lightgreen' : 'pink');
+
+    document.querySelector('.progress-item-' + i).style.backgroundColor = color;
+  }
+  return new Promise(function (resolve, reject) {
+    setTimeout(resolve, 10);
+  })
 }
 
 class ImageCaptionGenerator {
@@ -44,13 +64,14 @@ class ImageCaptionGenerator {
   }
 
   async generate_caption(image_data) {
+    await set_progress(1);
     console.log('Extracting feature');
     let image_feature = await this.extract_image_feature(image_data);
+    await set_progress(2);
     console.log('Initializing caption model');
     await this.set_image_feature(image_feature);
 
     for (let i = 0; i < this.max_length; i++) {
-      console.log('i', i);
       let next_stack = [];
       let any_updated = false;
       for (let j = 0; j < this.beam_stack.length; j++) {
@@ -74,7 +95,6 @@ class ImageCaptionGenerator {
       }
     }
 
-    console.log('search end');
 
     let sentence_strs = [];
     for (let i = 0; i < this.beam_stack.length; i++) {
@@ -85,6 +105,7 @@ class ImageCaptionGenerator {
       sentence_strs.push(sentence_str);
     }
 
+    await set_progress(3);
     return sentence_strs;
   }
 
@@ -105,9 +126,9 @@ class ImageCaptionGenerator {
     await this.runner_caption.run();
 
     // lstm_states, sentence, last_word, likelihood
-    this.beam_stack = [[{h: this.view_cap_h_out.toActual().slice(), c: this.view_cap_c_out.toActual().slice()},
-                        [], this.word_data.bos_id, 0.0]];
-    
+    this.beam_stack = [[{ h: this.view_cap_h_out.toActual().slice(), c: this.view_cap_c_out.toActual().slice() },
+    [], this.word_data.bos_id, 0.0]];
+
     this.view_cap_image_switch.set(this.switch_off);
     this.view_cap_word_switch.set(this.switch_on);
   }
@@ -116,7 +137,7 @@ class ImageCaptionGenerator {
     this.view_cap_word_in.set(new Float32Array([current_status[2]]));
     this.view_cap_h_in.set(current_status[0].h);
     this.view_cap_c_in.set(current_status[0].c);
-    
+
     await this.runner_caption.run();
 
     let h_array = this.view_cap_h_out.toActual().slice();
@@ -129,12 +150,87 @@ class ImageCaptionGenerator {
       let selected_word = top_words[i];
       let new_sentence = current_status[1].concat(selected_word);
       let new_likelihood = current_status[3] + Math.log(word_probs[selected_word]);
-      next_stack.push([{h: h_array, c: c_array}, new_sentence, selected_word, new_likelihood]);
+      next_stack.push([{ h: h_array, c: c_array }, new_sentence, selected_word, new_likelihood]);
     }
 
   }
 }
 
+
+async function run_generation() {
+  console.log('start running');
+  let sentences = await cap_gen.generate_caption(getImageData());
+  document.getElementById('sentences').textContent = sentences.join('\n');
+}
+
+async function load_models() {
+  let word_data = await (await fetch('./image-caption-model/word_data.json')).json();
+  let runner_image = await WebDNN.load('./image-caption-model/image-feature');
+  let runner_caption = await WebDNN.load('./image-caption-model/caption-generation');
+  cap_gen = new ImageCaptionGenerator(runner_image, runner_caption, word_data);
+}
+
+
+// based on http://phiary.me/html5-canvas-drag-and-drop-image-draw/
+window.onload = function () {
+  // allow drag-and-drop image file on canvas
+  var canvas = document.getElementById('image');
+  var ctx = canvas.getContext('2d');
+  var render = function (image) {
+    ctx.drawImage(image, 0, 0, 224, 224);
+  };
+
+  var cancelEvent = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  };
+
+  document.addEventListener("dragover", cancelEvent, false);
+  document.addEventListener("dragenter", cancelEvent, false);
+  document.addEventListener("drop", function (e) {
+    e.preventDefault();
+
+    var file = e.dataTransfer.files[0];
+    var image = new Image();
+    image.onload = function () {
+      render(this);
+    };
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      image.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }, false);
+
+  // show initial sample image
+  var sample_image = new Image();
+  sample_image.onload = function () {
+    ctx.drawImage(sample_image, 0, 0, 224, 224);
+  };
+
+  sample_image.src = './asakusa.jpg';
+};
+
+function getImageData() {
+  let ctx = document.getElementById('image').getContext('2d');
+  let h = 224;
+  let w = 224;
+  let imagedata = ctx.getImageData(0, 0, h, w);//h,w,c(rgba)
+  let pixeldata = imagedata.data;
+  let data = new Float32Array(3 * h * w);//h,w,c(bgr)
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      data[(y * w + x) * 3] = pixeldata[(y * w + x) * 4 + 2] - 103.939;//b
+      data[(y * w + x) * 3 + 1] = pixeldata[(y * w + x) * 4 + 1] - 116.779;//g
+      data[(y * w + x) * 3 + 2] = pixeldata[(y * w + x) * 4 + 0] - 123.68;//r
+    }
+  }
+  return data;
+}
+
+// for debugging purpose
 let sample_data;
 async function run_sample_data() {
   console.log('start running');
@@ -182,68 +278,4 @@ async function run_generation_sample_data() {
   console.log('loaded sample');
   let sentences = await cap_gen.generate_caption(new Float32Array(sample_data.input_img_embedded));
   document.getElementById('sentences').textContent = sentences.join('\n');
-}
-
-async function run_generation() {
-  console.log('start running');
-  let sentences = await cap_gen.generate_caption(getImageData());
-  document.getElementById('sentences').textContent = sentences.join('\n');
-}
-
-async function load_models() {
-  let word_data = await (await fetch('./image-caption-model/word_data.json')).json();
-  let runner_image = await WebDNN.load('./image-caption-model/image-feature');
-  let runner_caption = await WebDNN.load('./image-caption-model/caption-generation');
-  cap_gen = new ImageCaptionGenerator(runner_image, runner_caption, word_data);
-}
-
-
-// based on http://phiary.me/html5-canvas-drag-and-drop-image-draw/
-window.onload = function() {
-  var canvas = document.getElementById('image');
-  var ctx = canvas.getContext('2d');
-  var render = function(image) {
-    ctx.drawImage(image, 0, 0, 224, 224);
-  };
-  
-  var cancelEvent = function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  };
-  
-  document.addEventListener("dragover", cancelEvent, false);
-  document.addEventListener("dragenter", cancelEvent, false);
-  document.addEventListener("drop", function(e) {
-    e.preventDefault();
-    
-    var file = e.dataTransfer.files[0];
-    var image = new Image();
-    image.onload = function() {
-      render(this);
-    };
-    
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      image.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }, false);
-};
-
-function getImageData() {
-    let ctx = document.getElementById('image').getContext('2d');
-    let h = 224;
-    let w = 224;
-    let imagedata = ctx.getImageData(0, 0, h, w);//h,w,c(rgba)
-    let pixeldata = imagedata.data;
-    let data = new Float32Array(3 * h * w);//h,w,c(bgr)
-    for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-            data[(y * w + x) * 3] = pixeldata[(y * w + x) * 4 + 2] - 103.939;//b
-            data[(y * w + x) * 3 + 1] = pixeldata[(y * w + x) * 4 + 1] - 116.779;//g
-            data[(y * w + x) * 3 + 2] = pixeldata[(y * w + x) * 4 + 0] - 123.68;//r
-        }
-    }
-    return data;
 }
