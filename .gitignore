@@ -3,3 +3,4 @@ dataset/*
 !dataset/.gitkeep
 model/*
 !model/.gitkeep
+webdnn/image-caption-model
