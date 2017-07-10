@@ -96,9 +96,7 @@ def generate_graph_model2(caption_net, hidden_num):
 
     # prepare for lstm
     var_emb_word, = Embedding(None)(var_input_word, ConstantVariable(caption_net.word_vec.W.data, OrderCN))  # OrderNTC
-    var_emb_word_sw, = ElementwiseMul(None)(var_emb_word, var_switch_word)
-    var_input_img_sw, = ElementwiseMul(None)(var_input_img, var_switch_img)
-    var_lstm_input, = ElementwiseSum(None)(var_input_img_sw, var_emb_word_sw)
+    var_lstm_input = (var_emb_word * var_switch_word) + (var_input_img * var_switch_img)
 
     # lstm
     lstm_opr = LSTM(None, use_bias=True, return_sequences=False,
