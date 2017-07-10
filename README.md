@@ -2,7 +2,9 @@
 
 Python 3 and ResNet feature version by @milhidaka
 
-Including caption generation demo on web browser using [WebDNN](https://github.com/mil-tokyo/webdnn).
+Including caption generation [demo on web browser](https://milhidaka.github.io/chainer-image-caption/) using [WebDNN](https://github.com/mil-tokyo/webdnn).
+
+![Screenshot](./image/demo_screenshot.png)
 
 # Requirement
 
@@ -14,7 +16,7 @@ Including caption generation demo on web browser using [WebDNN](https://github.c
 # Usage (only caption generation)
 
 ## Simply doing caption generation using pre-trained model (ResNet-50 + MSCOCO)
-Download [caption_gen_resnet.model](https://drive.google.com/file/d/0BxKvBdxU_LchXzJqRTZBMU5SUVE/view?usp=sharing) (43MB) and [dataset_coco.pkl](https://drive.google.com/file/d/0BxKvBdxU_LchNmhmVHBRZ1laUkk/view?usp=sharing).
+Download [caption_gen_resnet.model](https://drive.google.com/file/d/0BxKvBdxU_LchXzJqRTZBMU5SUVE/view?usp=sharing) (45MB) and [dataset_coco.pkl](https://drive.google.com/file/d/0BxKvBdxU_LchNmhmVHBRZ1laUkk/view?usp=sharing) (28MB).
 
 ```
 $ python src/generate_caption.py -s dataset_coco.pkl -m caption_gen_resnet.model -l image/list.txt -g 0
