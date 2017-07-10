@@ -6,7 +6,8 @@ async function run() {
   if (!cap_gen) {
     await load_models();
   }
-  await run_generation();
+  //await run_generation();
+  await run_sample_data();
 }
 
 class ImageCaptionGenerator {
@@ -153,12 +154,12 @@ async function run_sample_data() {
   in_views[4].set(new Float32Array(cap_gen.word_data.hidden_num));//var_last_h
   in_views[5].set(new Float32Array(cap_gen.word_data.hidden_num));//var_last_c
 
-  await runner_caption.run();
+  await cap_gen.runner_caption.run();
 
   console.log('var_word_prob_biased', out_views[0].toActual());
-  console.log('var_lstm_h', out_views[1].toActual());
+  console.log('var_lstm_h', new Float32Array(out_views[1].toActual()));
   console.log('expected_var_lstm_h', new Float32Array(sample_data.image_lstm_output));
-  console.log('var_lstm_c', out_views[2].toActual());
+  console.log('var_lstm_c', new Float32Array(out_views[2].toActual()));
 
   in_views[1].set(new Float32Array(sample_data.bos_raw_vec));
   in_views[2].set(switch_off);
@@ -166,13 +167,13 @@ async function run_sample_data() {
   in_views[4].set(out_views[1].toActual());
   in_views[5].set(out_views[2].toActual());
 
-  await runner_caption.run();
+  await cap_gen.runner_caption.run();
 
   console.log('var_word_prob_biased', out_views[0].toActual());
   console.log('expected_var_word_prob_biased', new Float32Array(sample_data.bos_word_prob));
-  console.log('var_lstm_h', out_views[1].toActual());
+  console.log('var_lstm_h', new Float32Array(out_views[1].toActual()));
   console.log('expected_var_lstm_h', new Float32Array(sample_data.bos_lstm_output));
-  console.log('var_lstm_c', out_views[2].toActual());
+  console.log('var_lstm_c', new Float32Array(out_views[2].toActual()));
 }
 
 async function run_generation_sample_data() {

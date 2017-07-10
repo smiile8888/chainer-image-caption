@@ -46,7 +46,7 @@ from webdnn.graph.order import OrderNC, OrderC, OrderCN, OrderNTC, OrderNT
 from webdnn.graph.variable import Variable
 from webdnn.graph.variables.constant_variable import ConstantVariable
 from webdnn.graph.operators.embedding import Embedding
-from webdnn.frontend.chainer import ChainerConverter
+from webdnn.frontend.chainer.converter import ChainerConverter
 from webdnn.util import console
 
 from net import ImageCaption
@@ -191,8 +191,8 @@ def main():
     last_backend_exception = None
     for backend in args.backend.split(","):
         try:
-            graph_exec_data = generate_descriptor(backend, graph1, constant_encoder_name=args.encoding)
-            graph_exec_data.save(out_dir_graph1)
+            #graph_exec_data = generate_descriptor(backend, graph1, constant_encoder_name=args.encoding)
+            #graph_exec_data.save(out_dir_graph1)
             graph_exec_data = generate_descriptor(backend, graph2, constant_encoder_name=args.encoding)
             graph_exec_data.save(out_dir_graph2)
         except Exception as ex:
