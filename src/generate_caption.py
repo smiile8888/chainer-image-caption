@@ -1,7 +1,8 @@
 import argparse
 import numpy as np
-import cPickle as pickle
-from image_model import VGG19
+import pickle
+import chainer
+import PIL.Image
 from net import ImageCaption
 
 import chainer
@@ -10,8 +11,6 @@ from chainer import Variable, serializers, cuda, functions as F
 parser = argparse.ArgumentParser(description='Generate image caption')
 parser.add_argument('--gpu', '-g', default=-1, type=int,
                     help='GPU ID (negative value indicates CPU)')
-parser.add_argument('--image_model', '-i', required=True, type=str,
-                    help='input images model file path (*.caffemodel or *.pkl)')
 parser.add_argument('--model', '-m', required=True, type=str,
                     help='input model file path')
 parser.add_argument('--sentence', '-s', required=True, type=str,
@@ -20,7 +19,7 @@ parser.add_argument('--list', '-l', required=True, type=str,
                     help='image file list file path')
 args = parser.parse_args()
 
-feature_num = 4096
+feature_num = 2048
 hidden_num = 512
 beam_width = 20
 max_length = 60
@@ -32,8 +31,13 @@ id_to_word = {}
 for k, v in word_ids.items():
     id_to_word[v] = k
 
-image_model = VGG19()
-image_model.load(args.image_model)
+image_model = chainer.links.model.vision.resnet.ResNet50Layers()
+
+
+def extract_image_feature(image_path):
+    feats = image_model.extract([PIL.Image.open(image_path)], layers=["pool5"])["pool5"]
+    return feats
+
 
 caption_net = ImageCaption(len(word_ids), feature_num, hidden_num)
 serializers.load_hdf5(args.model, caption_net)
@@ -42,7 +46,7 @@ xp = np
 if args.gpu >= 0:
     cuda.check_cuda_available()
     gpu_device = args.gpu
-    cuda.get_device(gpu_device).use()
+    cuda.get_device_from_id(gpu_device).use()
     xp = cuda.cupy
     image_model.to_gpu(gpu_device)
     caption_net.to_gpu(gpu_device)
@@ -53,8 +57,9 @@ eos = word_ids['</S>']
 with open(args.list) as f:
     paths = filter(bool, f.read().split('\n'))
 
-def generate(net, image_model, image_path):
-    feature = image_model.feature(image_path)
+
+def generate(net, image_path):
+    feature = extract_image_feature(image_path)
     net.initialize(feature)
     candidates = [(net, [bos], 0)]
 
@@ -75,11 +80,12 @@ def generate(net, image_model, image_path):
             break
     return [candidate[1] for candidate in candidates]
 
+
 with chainer.using_config('train', False):
     with chainer.using_config('enable_backprop', False):
         for path in paths:
-            sentences = generate(caption_net, image_model, path)
-            print '# ', path
+            sentences = generate(caption_net, path)
+            print('# ', path)
             for token_ids in sentences[:5]:
                 tokens = [id_to_word[token_id] for token_id in token_ids[1:-1]]
-                print ' '.join(tokens)
+                print(' '.join(tokens))

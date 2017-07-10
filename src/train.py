@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import cPickle as pickle
+import pickle
 import json
 import numpy as np
 import scipy.io
 import random
 import chainer
+import h5py  # avoid error that h5py does not exist when saving
 from chainer import cuda, optimizers, serializers, functions as F
 from chainer.functions.evaluation import accuracy
 from net import ImageCaption
@@ -28,12 +29,11 @@ parser.add_argument('--iter', default=100, type=int,
 args = parser.parse_args()
 
 gpu_device = None
-args = parser.parse_args()
 xp = np
 if args.gpu >= 0:
     cuda.check_cuda_available()
     gpu_device = args.gpu
-    cuda.get_device(gpu_device).use()
+    cuda.get_device_from_id(gpu_device).use()
     xp = cuda.cupy
 
 with open(args.sentence, 'rb') as f:
@@ -50,7 +50,7 @@ feature_num = images.shape[1]
 hidden_num = 512
 batch_size = 128
 
-print 'word count: ', len(word_ids)
+print('word count: ', len(word_ids))
 caption_net = ImageCaption(len(word_ids), feature_num, hidden_num)
 if gpu_device is not None:
     caption_net.to_gpu(gpu_device)
@@ -144,9 +144,9 @@ def train(epoch_num):
             sum_acc += acc * size
             sum_size += size
             if (i + 1) % 500 == 0:
-                print '{} / {} loss: {} accuracy: {}'.format(i + 1, batch_num, sum_loss / sum_size, sum_acc / sum_size)
-        print 'epoch: {} done'.format(epoch + 1)
-        print 'train loss: {} accuracy: {}'.format(sum_loss / sum_size, sum_acc / sum_size)
+                print('{} / {} loss: {} accuracy: {}'.format(i + 1, batch_num, sum_loss / sum_size, sum_acc / sum_size))
+        print('epoch: {} done'.format(epoch + 1))
+        print('train loss: {} accuracy: {}'.format(sum_loss / sum_size, sum_acc / sum_size))
         sum_loss = 0
         sum_acc = 0
         sum_size = 0
@@ -162,7 +162,7 @@ def train(epoch_num):
                 sum_loss += float(loss.data) * size
                 sum_acc += acc * size
                 sum_size += size
-        print 'test loss: {} accuracy: {}'.format(sum_loss / sum_size, sum_acc / sum_size)
+        print('test loss: {} accuracy: {}'.format(sum_loss / sum_size, sum_acc / sum_size))
 
         serializers.save_hdf5(args.output + '_{0:04d}.model'.format(epoch), caption_net)
         serializers.save_hdf5(args.output + '_{0:04d}.state'.format(epoch), optimizer)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import cPickle as pickle
+import pickle
 import json
 import numpy as np
 
