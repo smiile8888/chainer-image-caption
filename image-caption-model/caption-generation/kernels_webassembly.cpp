@@ -2,21 +2,19 @@
 #include <stdlib.h>
 #include <math.h>
 
-float static_buffer[11133205];
+float static_buffer[11124403];
 float* dynamic_buffer = nullptr;
 
-int meta_buf_0[] = {11114588,11114592,0,8793,1,1,512};
-int meta_buf_1[] = {11114592,3,512,11114592,11113052,1,1,512,512,1,512,512,1,1,1,512,1,1,512};
-int meta_buf_2[] = {11115616,3,512,11113564,11112540,1,1,512,512,1,512,512,1,1,1,512,1,1,512};
-int meta_buf_3[] = {11115616,3,512,11115616,11114592,1,1,512,512,1,512,512,1,1,1,512,1,1,512};
-int meta_buf_4[] = {11115616,11115104,11114592,9004032,10052608,512,1,1,512,11109980,11114076,11112028};
-int meta_buf_5[] = {11115104,4502016,11115616,1,8793,512};
-int meta_buf_6[] = {11115616,11101184,11115616,1,8793,1};
-int meta_buf_7[] = {11115616,11124412,1,8793};
-int* meta_buffers[] = {meta_buf_0,meta_buf_1,meta_buf_2,meta_buf_3,meta_buf_4,meta_buf_5,meta_buf_6,meta_buf_7};
+int meta_buf_0[] = {11124402,11112025,0,8793,1,1,512};
+int meta_buf_1[] = {11112025,11122866,11122354,11121330,11112025,512};
+int meta_buf_2[] = {11112025,11123378,11123890,5552640,4504064,512,1,1,512,4502016,11121842,11120818};
+int meta_buf_3[] = {11123378,6601216,11112025,1,8793,512};
+int meta_buf_4[] = {11103232,11112025,11112025,8793};
+int meta_buf_5[] = {11112025,11112025,1,8793};
+int* meta_buffers[] = {meta_buf_0,meta_buf_1,meta_buf_2,meta_buf_3,meta_buf_4,meta_buf_5};
 
 extern "C" void init() {
-    //static_buffer = (float*)malloc(11133205 * sizeof(float));
+    //static_buffer = (float*)malloc(11124403 * sizeof(float));
 }
 
 extern "C" float* get_static_buffer(void) {
@@ -61,56 +59,33 @@ void embedding_bff664a25d5cd866fdc2b62a606caa6eb07d8ca9703906d8f951028d(const in
 }
 
 
-void elementwisemul_7d55d8021e77415f861e306b13bacf0e995231389ff550023e3d8d53(const int * meta_buffer)
+void fusedelementwise_b3bd3495011eb47e09429dbdb1edf2e81ea13ada3b170bce9ec85096(const int * meta_buffer)
 {
-    float *Y = (static_buffer + meta_buffer[0]);
-    const int N = meta_buffer[2];
-
-float y;
-float x0, x1;
-const float *X0 = (meta_buffer[3+2+ (0)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (0)];
-const float *X1 = (meta_buffer[3+2+ (1)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (1)];
-    
-    for (int i = 0; i < N; i++)
-    {
-
-
-
-x0 = X0[i];
-x1 = X1[i];
-
+    const float * v1 = (static_buffer + meta_buffer[0]);
+    const float * v2 = (static_buffer + meta_buffer[1]);
+    const float * v3 = (static_buffer + meta_buffer[2]);
+    const float * v4 = (static_buffer + meta_buffer[3]);
+    float * v5 = (static_buffer + meta_buffer[4]);
+    const int D0 = meta_buffer[5];
+    int d0;
+    for (d0 = 0; d0 < D0; d0 += 1) {
+        const float v6 = v2[d0];
+        const float v7 = v4[d0];
+        float v8;
         {
-y = x0 * x1;
+            v8 = v6 * v7;
         }
-
-        Y[i] = y;
-    }
-}
-
-
-void elementwiseadd_0e535909dbb02b8c2f4b5633b10582b42cfa672a6e57120aef70db2f(const int * meta_buffer)
-{
-    float *Y = (static_buffer + meta_buffer[0]);
-    const int N = meta_buffer[2];
-
-float y;
-float x0, x1;
-const float *X0 = (meta_buffer[3+2+ (0)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (0)];
-const float *X1 = (meta_buffer[3+2+ (1)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (1)];
-    
-    for (int i = 0; i < N; i++)
-    {
-
-
-
-x0 = X0[i];
-x1 = X1[i];
-
+        const float v9 = v1[d0];
+        const float v10 = v3[d0];
+        float v11;
         {
-y = x0 + x1;
+            v11 = v9 * v10;
         }
-
-        Y[i] = y;
+        float v12;
+        {
+            v12 = v11 + v8;
+        }
+        v5[d0] = v12;
     }
 }
 
@@ -244,17 +219,21 @@ void sgemm_49ee440e78a4467f5e364896610c9bdbdd5dbf08d70b98a210d579d8(const int * 
 }
 
 
-void axiswisebias_2c5dea3d008381f35c96b0418e0c849bf9f138abcd775df0091f4ba1(const int * meta_buffer)
+void axiswisebias_98450d361d3b8b06ad718e1e961bda61506f2baab3157c18aecbf897(const int * meta_buffer)
 {
-    const float *X = (static_buffer + meta_buffer[0]);
-          float *Y = (static_buffer + meta_buffer[2]);
-    const float *B = (static_buffer + meta_buffer[1]);
-    const int D1 = meta_buffer[3];
-    const int D2 = meta_buffer[4];
-    const int D3 = meta_buffer[5];
-
-    for (int index = 0; index < D1 * D2 * D3; index++) {
-        Y[index] = X[index] + B[index / D3 % D2];
+    const float * v1 = (static_buffer + meta_buffer[0]);
+    const float * v2 = (static_buffer + meta_buffer[1]);
+    float * v3 = (static_buffer + meta_buffer[2]);
+    const int D0 = meta_buffer[3];
+    int d0;
+    for (d0 = 0; d0 < D0; d0 += 1) {
+        const float v4 = v1[d0];
+        const float v5 = v2[d0];
+        float v6;
+        {
+            v6 = v5 + v4;
+        }
+        v3[d0] = v6;
     }
 }
 
@@ -291,13 +270,11 @@ void softmax_be4c2fae32b9326b0ca891226ac9234de828aecba508a30394d8a57e(const int 
 
 extern "C" void run() {
 embedding_bff664a25d5cd866fdc2b62a606caa6eb07d8ca9703906d8f951028d(meta_buf_0);
-elementwisemul_7d55d8021e77415f861e306b13bacf0e995231389ff550023e3d8d53(meta_buf_1);
-elementwisemul_7d55d8021e77415f861e306b13bacf0e995231389ff550023e3d8d53(meta_buf_2);
-elementwiseadd_0e535909dbb02b8c2f4b5633b10582b42cfa672a6e57120aef70db2f(meta_buf_3);
-lstm_f7d21f55521097c72f1fba6e76fadb300c0e0be98b1edb5512fe8a73(meta_buf_4);
-sgemm_49ee440e78a4467f5e364896610c9bdbdd5dbf08d70b98a210d579d8(meta_buf_5);
-axiswisebias_2c5dea3d008381f35c96b0418e0c849bf9f138abcd775df0091f4ba1(meta_buf_6);
-softmax_be4c2fae32b9326b0ca891226ac9234de828aecba508a30394d8a57e(meta_buf_7);
+fusedelementwise_b3bd3495011eb47e09429dbdb1edf2e81ea13ada3b170bce9ec85096(meta_buf_1);
+lstm_f7d21f55521097c72f1fba6e76fadb300c0e0be98b1edb5512fe8a73(meta_buf_2);
+sgemm_49ee440e78a4467f5e364896610c9bdbdd5dbf08d70b98a210d579d8(meta_buf_3);
+axiswisebias_98450d361d3b8b06ad718e1e961bda61506f2baab3157c18aecbf897(meta_buf_4);
+softmax_be4c2fae32b9326b0ca891226ac9234de828aecba508a30394d8a57e(meta_buf_5);
 
 }
 

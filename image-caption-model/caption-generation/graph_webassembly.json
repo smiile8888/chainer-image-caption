@@ -2,112 +2,87 @@
   "weight_encoding": "eightbit",
   "memory_layout": {
     "static": {
-      "size": 11133205,
+      "size": 11124403,
       "allocations": {
-        "v10": {
-          "name": "v10",
+        "a659": {
+          "name": "a659",
+          "offset": 11122866,
+          "size": 512
+        },
+        "a660": {
+          "name": "a660",
+          "offset": 11124402,
+          "size": 1
+        },
+        "a661": {
+          "name": "a661",
+          "offset": 11121330,
+          "size": 512
+        },
+        "a662": {
+          "name": "a662",
+          "offset": 11122354,
+          "size": 512
+        },
+        "a663": {
+          "name": "a663",
+          "offset": 11120818,
+          "size": 512
+        },
+        "a664": {
+          "name": "a664",
+          "offset": 11121842,
+          "size": 512
+        },
+        "a672": {
+          "name": "a672",
+          "offset": 11112025,
+          "size": 512
+        },
+        "a666": {
+          "name": "a666",
+          "offset": 11123378,
+          "size": 512
+        },
+        "a674": {
+          "name": "a674",
+          "offset": 11112025,
+          "size": 8793
+        },
+        "a667": {
+          "name": "a667",
+          "offset": 11123890,
+          "size": 512
+        },
+        "a653": {
+          "name": "a653",
           "offset": 0,
           "size": 4502016
         },
-        "v11": {
-          "name": "v11",
+        "a654": {
+          "name": "a654",
           "offset": 4502016,
-          "size": 4502016
-        },
-        "v7": {
-          "name": "v7",
-          "offset": 9004032,
-          "size": 1048576
-        },
-        "v8": {
-          "name": "v8",
-          "offset": 10052608,
-          "size": 1048576
-        },
-        "v6": {
-          "name": "v6",
-          "offset": 11101184,
-          "size": 8793
-        },
-        "v16": {
-          "name": "v16",
-          "offset": 11109980,
           "size": 2048
         },
-        "v3": {
-          "name": "v3",
-          "offset": 11112028,
-          "size": 512
+        "a655": {
+          "name": "a655",
+          "offset": 4504064,
+          "size": 1048576
         },
-        "v4": {
-          "name": "v4",
-          "offset": 11112540,
-          "size": 512
+        "a656": {
+          "name": "a656",
+          "offset": 5552640,
+          "size": 1048576
         },
-        "v9": {
-          "name": "v9",
-          "offset": 11113052,
-          "size": 512
+        "a657": {
+          "name": "a657",
+          "offset": 6601216,
+          "size": 4502016
         },
-        "v15": {
-          "name": "v15",
-          "offset": 11113564,
-          "size": 512
-        },
-        "v19": {
-          "name": "v19",
-          "offset": 11114076,
-          "size": 512
-        },
-        "v20": {
-          "name": "v20",
-          "offset": 11114588,
-          "size": 1
-        },
-        "v5": {
-          "name": "v5",
-          "offset": 11114592,
-          "size": 512
-        },
-        "v12": {
-          "name": "v12",
-          "offset": 11114592,
-          "size": 512
-        },
-        "v18": {
-          "name": "v18",
-          "offset": 11115104,
-          "size": 512
-        },
-        "v14": {
-          "name": "v14",
-          "offset": 11115616,
-          "size": 512
-        },
-        "v0": {
-          "name": "v0",
-          "offset": 11115616,
+        "a658": {
+          "name": "a658",
+          "offset": 11103232,
           "size": 8793
-        },
-        "v13": {
-          "name": "v13",
-          "offset": 11124412,
-          "size": 8793
-        },
-        "v1": {
-          "name": "v1",
-          "offset": 11114592,
-          "size": 512
-        },
-        "v2": {
-          "name": "v2",
-          "offset": 11115616,
-          "size": 8793
-        },
-        "v17": {
-          "name": "v17",
-          "offset": 11115616,
-          "size": 512
         }
       }
     },
@@ -123,22 +98,20 @@
     [],
     [],
     [],
-    [],
-    [],
     []
   ],
   "inputs": [
-    "v15",
-    "v20",
-    "v4",
-    "v9",
-    "v3",
-    "v19"
+    "a659",
+    "a660",
+    "a661",
+    "a662",
+    "a663",
+    "a664"
   ],
   "outputs": [
-    "v13",
-    "v18",
-    "v5"
+    "a674",
+    "a666",
+    "a667"
   ],
   "licenses": {
     "webdnn": "(C) Machine Intelligence Laboratory (The University of Tokyo), MIT License",

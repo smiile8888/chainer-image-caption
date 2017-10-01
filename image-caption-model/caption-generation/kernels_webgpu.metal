@@ -4,42 +4,11 @@ using namespace metal;
 
 #define OPTIMIZE 1
 
-kernel void elementwisemul_3010ad93352c69153e1c3fe7b0460535a418732786f01141bfa1a487(device float * static_buffer[[buffer(0)]],
+kernel void embedding_24f42c5f69e350516a91325d82d108e4ff673079c33bfbb1f4ad5ee4(device float * static_buffer[[buffer(0)]],
                           device float * dynamic_buffer[[buffer(1)]],
                           const device int * meta_buffer [[buffer(2)]],
-                          uint index[[thread_position_in_grid]],
+                          uint global_index[[thread_position_in_grid]],
                           uint num_threads[[threads_per_grid]])
-{
-    device float *Y = (static_buffer + meta_buffer[0]);
-    const int N = meta_buffer[2];
-
-float y;
-float x0, x1;
-const device float *X0 = (meta_buffer[3+2+ (0)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (0)];
-const device float *X1 = (meta_buffer[3+2+ (1)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (1)];
-    
-    for (int i = index; i < N; i+= num_threads)
-    {
-
-
-
-x0 = X0[i];
-x1 = X1[i];
-
-        {
-y = x0 * x1;
-        }
-
-        Y[i] = y;
-    }
-}
-
-
-kernel void embedding_e14f672de692b61d9a8c6acadd5131ff05befa6f1bb13f2e43209399(device float * static_buffer[[buffer(0)]],
-                          device float * dynamic_buffer[[buffer(1)]],
-                          const device int * meta_buffer [[buffer(2)]],
-                          ushort global_index[[thread_position_in_grid]],
-                          ushort num_threads[[threads_per_grid]])
 {
     const device float *X = (static_buffer + meta_buffer[0]);
     device float       *Y = (static_buffer + meta_buffer[1]);
@@ -61,33 +30,37 @@ kernel void embedding_e14f672de692b61d9a8c6acadd5131ff05befa6f1bb13f2e43209399(d
 }
 
 
-kernel void elementwiseadd_8e730fced7e44535d84f6f69b7a1d08bcfe010888d0c5baa24d9f612(device float * static_buffer[[buffer(0)]],
+kernel void fusedelementwise_08e822ad6c1ce1da1563af8e111b0cf5df5abb5711b2e7e892f47e39(device float * static_buffer[[buffer(0)]],
                           device float * dynamic_buffer[[buffer(1)]],
                           const device int * meta_buffer [[buffer(2)]],
-                          uint index[[thread_position_in_grid]],
+                          uint gid[[thread_position_in_grid]],
                           uint num_threads[[threads_per_grid]])
 {
-    device float *Y = (static_buffer + meta_buffer[0]);
-    const int N = meta_buffer[2];
-
-float y;
-float x0, x1;
-const device float *X0 = (meta_buffer[3+2+ (0)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (0)];
-const device float *X1 = (meta_buffer[3+2+ (1)] ? static_buffer : dynamic_buffer) + meta_buffer[3 + (1)];
-    
-    for (int i = index; i < N; i+= num_threads)
-    {
-
-
-
-x0 = X0[i];
-x1 = X1[i];
-
+    const device float * v1 = (static_buffer + meta_buffer[0]);
+    const device float * v2 = (static_buffer + meta_buffer[1]);
+    const device float * v3 = (static_buffer + meta_buffer[2]);
+    const device float * v4 = (static_buffer + meta_buffer[3]);
+    device float * v5 = (static_buffer + meta_buffer[4]);
+    const int D0 = meta_buffer[5];
+    int d0;
+    for (d0 = gid; d0 < D0; d0 += num_threads) {
+        const float v6 = v3[d0];
+        const float v7 = v4[d0];
+        float v8;
         {
-y = x0 + x1;
+            v8 = v6 * v7;
         }
-
-        Y[i] = y;
+        const float v9 = v1[d0];
+        const float v10 = v2[d0];
+        float v11;
+        {
+            v11 = v9 * v10;
+        }
+        float v12;
+        {
+            v12 = v11 + v8;
+        }
+        v5[d0] = v12;
     }
 }
 
@@ -218,11 +191,11 @@ kernel void lstm_de5882ea81875bbff4c2eb63571311f0182023d989f25793b393cc29(device
 }
     
 
-kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(device float * static_buffer[[buffer(0)]],
+kernel void sgemm_7b4817c4ac9dfe433720b075aa47e84624573a88bc125170e1038e1b(device float * static_buffer[[buffer(0)]],
                           device float * dynamic_buffer[[buffer(1)]],
                           const device int * meta_buffer [[buffer(2)]],
-                          ushort index[[thread_index_in_threadgroup]],
-                          ushort2 group_position[[threadgroup_position_in_grid]])
+                          uint index[[thread_index_in_threadgroup]],
+                          uint2 group_position[[threadgroup_position_in_grid]])
 {
 #define TRANSPOSE_A 1
 #define TRANSPOSE_B 1
@@ -246,10 +219,6 @@ kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(devic
     #define B_STRIDE_N K
 #endif
 
-#define WITH_BIAS 1
-#define HAS_INLINE 1
-
-
 #if K_DIVIDABLE_BY_8 && M_DIVIDABLE_BY_64  && N_DIVIDABLE_BY_64 && !TRANSPOSE_A && TRANSPOSE_B && OPTIMIZE
     const device float4 *load_target4 = (index & 32) 
         ? (const device float4 *)((static_buffer + meta_buffer[1])) 
@@ -260,10 +229,10 @@ kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(devic
         : ((static_buffer + meta_buffer[0]));
 #endif
 
-    const int M = meta_buffer[4];
-    const int N = meta_buffer[5];
+    const int M = meta_buffer[3];
+    const int N = meta_buffer[4];
 
-    const int K = meta_buffer[6];
+    const int K = meta_buffer[5];
 
     threadgroup float4 shared4[32 * 8 * 2];
 
@@ -517,13 +486,6 @@ kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(devic
     {
     
 #if OPTIMIZE && N_DIVIDABLE_BY_64
-    #if WITH_BIAS
-        float4 b[2];
-        const device float4 *bias4 = (const device float4 *)((static_buffer + meta_buffer[3]));
-        b[0] = bias4[group_position.y * 16 + n_offset * 2 + 0];
-        b[1] = bias4[group_position.y * 16 + n_offset * 2 + 1];
-    #endif
-    
         device float4 *C4 = (device float4 *)((static_buffer + meta_buffer[2]));
         const int N4 = N >> 2;
         int m = group_position.x * 64 + m_offset * 8;
@@ -538,39 +500,12 @@ kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(devic
             float4 result0 = result[m_sub * 2 + 0];
             float4 result1 = result[m_sub * 2 + 1];
 
-    #if WITH_BIAS
-            result0 += b[0];
-            result1 += b[1];
-    #endif
-
-    #if HAS_INLINE
-            result0[0] = result0[0];
-            result0[1] = result0[1];
-            result0[2] = result0[2];
-            result0[3] = result0[3];
-            result1[0] = result1[0];
-            result1[1] = result1[1];
-            result1[2] = result1[2];
-            result1[3] = result1[3];
-    #endif
-
             C4[m * N4 + n + 0] = result0;
             C4[m * N4 + n + 1] = result1;
             
             m++;
         }
 #else
-    #if WITH_BIAS
-        const device float *bias = (static_buffer + meta_buffer[3]);
-        float b[8];
-        for (int n_sub = 0; n_sub < 8; n_sub++)
-        {
-            b[n_sub] = (group_position.y * 64 + n_offset * 8 + n_sub < N)
-                ? bias[group_position.y * 64 + n_offset * 8 + n_sub]
-                : 0;
-        }
-    #endif
-
         device float *C = (static_buffer + meta_buffer[2]);
         int m = group_position.x * 64 + m_offset * 8;
         for (int m_sub = 0; m_sub < 8; m_sub++)
@@ -582,18 +517,10 @@ kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(devic
                 for (int n_sub2 = 0; n_sub2 < 4; n_sub2++)
                 {
 
-    #if WITH_BIAS
-        #if OPTIMIZE && M_DIVIDABLE_BY_64
-                    (         n < N) ? (C[m * N + n] = result[m_sub * 2 + n_sub1][n_sub2] + b[n_sub1*4+n_sub2]) : 0;
-        #else
-                    (m < M && n < N) ? (C[m * N + n] = result[m_sub * 2 + n_sub1][n_sub2] + b[n_sub1*4+n_sub2]) : 0;
-        #endif
-    #else
-        #if OPTIMIZE && M_DIVIDABLE_BY_64
+    #if OPTIMIZE && M_DIVIDABLE_BY_64
                     (         n < N) ? (C[m * N + n] = result[m_sub * 2 + n_sub1][n_sub2]) : 0;
-        #else
+    #else
                     (m < M && n < N) ? (C[m * N + n] = result[m_sub * 2 + n_sub1][n_sub2]) : 0;
-        #endif
     #endif
                     n++;
                 }
@@ -615,8 +542,29 @@ kernel void sgemm_8ba4c867855ccf05f4cf6d161ece0a9a28527fede7f58f2a12c4e9b7(devic
 #undef B_STRIDE_K
 #undef A_STRIDE_M
 #undef A_STRIDE_M
-#undef WITH_BIAS
-#undef HAS_INLINE
+}
+
+
+kernel void axiswisebias_59df3b0d6feefd576062ac58c68e6dade28056ea47dd0a57294bdf90(device float * static_buffer[[buffer(0)]],
+                          device float * dynamic_buffer[[buffer(1)]],
+                          const device int * meta_buffer [[buffer(2)]],
+                          uint gid[[thread_position_in_grid]],
+                          uint num_threads[[threads_per_grid]])
+{
+    const device float * v1 = (static_buffer + meta_buffer[0]);
+    const device float * v2 = (static_buffer + meta_buffer[1]);
+    device float * v3 = (static_buffer + meta_buffer[2]);
+    const int D0 = meta_buffer[3];
+    int d0;
+    for (d0 = gid; d0 < D0; d0 += num_threads) {
+        const float v4 = v1[d0];
+        const float v5 = v2[d0];
+        float v6;
+        {
+            v6 = v5 + v4;
+        }
+        v3[d0] = v6;
+    }
 }
 
 
