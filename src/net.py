@@ -17,7 +17,7 @@ class ImageCaption(chainer.Chain):
         h = self.image_vec(F.dropout(image_feature, ratio=self.dropout_ratio))
         self.lstm(F.dropout(h, ratio=self.dropout_ratio))
 
-    def __call__(self, word, train=True):
+    def __call__(self, word):
         h1 = self.word_vec(word)
         h2 = self.lstm(F.dropout(h1, ratio=self.dropout_ratio))
         return self.out_word(F.dropout(h2, ratio=self.dropout_ratio))

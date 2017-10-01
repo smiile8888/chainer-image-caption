@@ -10,7 +10,6 @@ async function run() {
       await load_models();
     }
     await run_generation();
-    //await run_sample_data();
   } catch (ex) {
     alert('Failed: ' + ex);
     throw ex;
@@ -69,6 +68,10 @@ class ImageCaptionGenerator {
     let image_feature = await this.extract_image_feature(image_data);
     await set_progress(2);
     console.log('Initializing caption model');
+    return await this.generate_caption_from_image_feature(image_feature);
+  }
+
+  async generate_caption_from_image_feature(image_feature) {
     await this.set_image_feature(image_feature);
 
     for (let i = 0; i < this.max_length; i++) {
@@ -159,14 +162,19 @@ class ImageCaptionGenerator {
 
 async function run_generation() {
   console.log('start running');
-  let sentences = await cap_gen.generate_caption(getImageData());
+  let image_data = await WebDNN.Image.getImageArray(document.getElementById('image'), {
+    order: WebDNN.Image.Order.CHW,
+    color: WebDNN.Image.Color.BGR,
+    bias: [123.68, 116.779, 103.939]
+  });
+  let sentences = await cap_gen.generate_caption(image_data);
   document.getElementById('sentences').textContent = sentences.join('\n');
 }
 
 async function load_models() {
   let word_data = await (await fetch('./image-caption-model/word_data.json')).json();
-  let runner_image = await WebDNN.load('./image-caption-model/image-feature');
-  let runner_caption = await WebDNN.load('./image-caption-model/caption-generation');
+  let runner_image = await WebDNN.load('./image-caption-model/image-feature', { backendOrder: ["webgpu", "webassembly"] });
+  let runner_caption = await WebDNN.load('./image-caption-model/caption-generation', { backendOrder: ["webassembly"] });
   cap_gen = new ImageCaptionGenerator(runner_image, runner_caption, word_data);
 }
 
@@ -212,23 +220,6 @@ window.onload = function () {
 
   sample_image.src = './asakusa.jpg';
 };
-
-function getImageData() {
-  let ctx = document.getElementById('image').getContext('2d');
-  let h = 224;
-  let w = 224;
-  let imagedata = ctx.getImageData(0, 0, h, w);//h,w,c(rgba)
-  let pixeldata = imagedata.data;
-  let data = new Float32Array(3 * h * w);//h,w,c(bgr)
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      data[(y * w + x) * 3] = pixeldata[(y * w + x) * 4 + 2] - 103.939;//b
-      data[(y * w + x) * 3 + 1] = pixeldata[(y * w + x) * 4 + 1] - 116.779;//g
-      data[(y * w + x) * 3 + 2] = pixeldata[(y * w + x) * 4 + 0] - 123.68;//r
-    }
-  }
-  return data;
-}
 
 // for debugging purpose
 let sample_data;
@@ -276,6 +267,6 @@ async function run_generation_sample_data() {
   console.log('start running');
   sample_data = await (await fetch('./image-caption-model/example_io.json')).json();
   console.log('loaded sample');
-  let sentences = await cap_gen.generate_caption(new Float32Array(sample_data.input_img_embedded));
+  let sentences = await cap_gen.generate_caption_from_image_feature(new Float32Array(sample_data.input_img_embedded));
   document.getElementById('sentences').textContent = sentences.join('\n');
 }
