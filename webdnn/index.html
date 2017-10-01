@@ -22,11 +22,12 @@
   <h1>Generating image caption demo</h1>
   Input image (can drag-drop image file):<br>
   <canvas id="image" width="224" height="224"></canvas><br>
+  <input type="file" id="load_local_image"><br>
   <button type="button" id="run_button" onclick="run(); return false;">Generate caption</button><br>
   <div class="progress">
-    <span class="progress-item progress-item-0">1. Load models</span><br>
-    <span class="progress-item progress-item-1">2. Analyze image</span><br>
-    <span class="progress-item progress-item-2">3. Generate text</span><br>
+    <span class="progress-item progress-item-0">Load models</span> &gt;
+    <span class="progress-item progress-item-1">Analyze image</span> &gt;
+    <span class="progress-item progress-item-2">Generate text</span>
   </div>
   <pre id="sentences">Generated caption will be shown here.</pre>
 

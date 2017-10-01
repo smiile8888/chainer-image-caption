@@ -219,6 +219,15 @@ window.onload = function () {
   };
 
   sample_image.src = './asakusa.jpg';
+
+  let load_local_image_element = document.getElementById("load_local_image");
+  load_local_image_element.addEventListener("change", function (e) {
+    let file = this.files[0];
+    if (file) {
+      let image_blob = window.URL.createObjectURL(file);
+      sample_image.src = image_blob;
+    }
+  })
 };
 
 // for debugging purpose
