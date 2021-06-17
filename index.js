@@ -292,7 +292,7 @@ async function getBHGenerate() {
     const generatedText = await fetch('/.netlify/functions/generate', {
       'method': 'POST',
       'body': JSON.stringify({
-        "prompt": caption,
+        "prompt": caption.textContent,
         "max_tokens": 70,
         "temperature": 1,
         "k": 5,
