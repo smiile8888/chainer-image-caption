@@ -218,7 +218,7 @@ window.onload = function () {
     ctx.drawImage(sample_image, 0, 0, 224, 224);
   };
 
-  sample_image.src = './asakusa.jpg';
+  sample_image.src = './playground.jpg';
 
   let load_local_image_element = document.getElementById("load_local_image");
   load_local_image_element.addEventListener("change", function (e) {

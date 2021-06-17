@@ -3,10 +3,11 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Caption generation demo</title>
+  <title>Storytelling Generator Demo</title>
   <script src="./inflate.min.js"></script>
   <script src="./webdnn.js"></script>
   <script src="./index.js"></script>
+
   <style>
     .progress {
       margin-top: 10px;
@@ -20,19 +21,30 @@
 
 <body>
   <h1>Generating image caption demo</h1>
-  Input image (can drag-drop image file):<br>
-  <canvas id="image" width="224" height="224"></canvas><br>
-  <input type="file" id="load_local_image"><br>
-  <button type="button" id="run_button" onclick="run(); return false;">Generate caption</button><br>
+  Input image (can drag-drop image file):
+  <br>
+  <canvas id="image" width="224" height="224"></canvas>
+  <br>
+  <input type="file" id="load_local_image">
+  <br>
+  <button type="button" id="run_button" onclick="run(); return false;">Give me caption</button>
+  <br>
   <div class="progress">
     <span class="progress-item progress-item-0">Load models</span> &gt;
     <span class="progress-item progress-item-1">Analyze image</span> &gt;
-    <span class="progress-item progress-item-2">Generate text</span>
+    <span class="progress-item progress-item-2">Generate caption</span>
   </div>
-  <pre id="sentences">Generated caption will be shown here.</pre>
+  <pre id="sentences">Your caption will be shown here 😎</pre>
 
-  <hr> Transferred to browser demo using <a href="https://github.com/mil-tokyo/webdnn">WebDNN</a> by <a href="https://github.com/milhidaka">@milhidaka</a>,
-  based on <a href="https://github.com/dsanno">@dsanno</a>'s model. <a href="https://github.com/milhidaka/chainer-image-caption">Github</a>
+  <button type="button" id="generate_button" onclick="">Tell me the story</button>
+
+  <pre id="generate-story">. . .</pre>
+
+  <!-- Credits -->
+  <hr> Transferred to browser demo using <a href="https://github.com/mil-tokyo/webdnn">WebDNN</a> by <a
+    href="https://github.com/milhidaka">@milhidaka</a>,
+  based on <a href="https://github.com/dsanno">@dsanno</a>'s model. <a
+    href="https://github.com/milhidaka/chainer-image-caption">Github</a>
 </body>
 
 </html>
