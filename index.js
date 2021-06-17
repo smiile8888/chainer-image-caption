@@ -181,54 +181,64 @@ async function load_models() {
 
 
 // based on http://phiary.me/html5-canvas-drag-and-drop-image-draw/
-window.onload = function () {
-  // allow drag-and-drop image file on canvas
-  var canvas = document.getElementById('image');
-  var ctx = canvas.getContext('2d');
-  var render = function (image) {
-    ctx.drawImage(image, 0, 0, 224, 224);
-  };
+// window.onload = function () {
+//   // allow drag-and-drop image file on canvas
+//   var canvas = document.getElementById('image');
+//   var ctx = canvas.getContext('2d');
+//   var render = function (image) {
+//     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+//   };
 
-  var cancelEvent = function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  };
+//   var cancelEvent = function (e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     return false;
+//   };
 
-  document.addEventListener("dragover", cancelEvent, false);
-  document.addEventListener("dragenter", cancelEvent, false);
-  document.addEventListener("drop", function (e) {
-    e.preventDefault();
+//   document.addEventListener("dragover", cancelEvent, false);
+//   document.addEventListener("dragenter", cancelEvent, false);
+//   document.addEventListener("drop", function (e) {
+//     e.preventDefault();
 
-    var file = e.dataTransfer.files[0];
-    var image = new Image();
-    image.onload = function () {
-      render(this);
-    };
+//     var file = e.dataTransfer.files[0];
+//     var image = new Image();
+//     image.onload = function () {
+//       render(this);
+//     };
 
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      image.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }, false);
+//     var reader = new FileReader();
+//     reader.onload = function (e) {
+//       image.src = e.target.result;
+//     };
+//     reader.readAsDataURL(file);
+//   }, false);
 
-  // show initial sample image
-  var sample_image = new Image();
-  sample_image.onload = function () {
-    ctx.drawImage(sample_image, 0, 0, canvas.width, canvas.height);
-  };
+//   // show initial sample image
+//   var sample_image = new Image();
+//   sample_image.onload = function () {
+//     ctx.drawImage(sample_image, 0, 0, canvas.width, canvas.height);
+//   };
 
-  sample_image.src = './playground.JPG';
+//   sample_image.src = './playground.JPG';
 
-  let load_local_image_element = document.getElementById("load_local_image");
-  load_local_image_element.addEventListener("change", function (e) {
-    let file = this.files[0];
-    if (file) {
-      let image_blob = window.URL.createObjectURL(file);
-      sample_image.src = image_blob;
-    }
-  })
+//   let load_local_image_element = document.getElementById("load_local_image");
+//   load_local_image_element.addEventListener("change", function (e) {
+//     let file = this.files[0];
+//     if (file) {
+//       let image_blob = window.URL.createObjectURL(file);
+//       sample_image.src = image_blob;
+//     }
+//   })
+// };
+
+window.onload = () => {
+  var image = document.getElementById('image');
+  image.src = './playground.JPG';
+
+  let uploadedImage = document.getElementById('upload-image');
+  uploadedImage.addEventListener('change', (e) => {
+    image.src = URL.createObjectURL(e.target.files[0]);
+  });
 };
 
 // for debugging purpose

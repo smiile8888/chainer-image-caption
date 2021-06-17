@@ -12,13 +12,15 @@
 
 <body>
   <h1>Generating image caption demo</h1>
-  Input image (can drag-drop image file):
   <br>
-  <canvas id="image"></canvas>
+  <img id="image" />
+  <!-- <canvas id="image"></canvas> -->
   <br>
-  <input type="file" id="load_local_image">
+  <!-- <input type="file" id="load_local_image"> -->
+  <p><label for="upload-image" style="cursor: pointer;">Upload Image</label></p>
+  <input type="file" accept="image/*" name="upload-image" style="display: none;" id="upload-image">
   <br>
-  <button type="button" id="run_button" onclick="run(); return false;">Give me caption</button>
+  <button type="button" id="run_button" onclick="run_generation_sample_data(); return false;">Give me caption</button>
   <br>
   <div class="progress">
     <span class="progress-item progress-item-0">Load models</span> &gt;
@@ -29,7 +31,7 @@
 
   <button type="button" id="generate_button" onclick="">Tell me the story</button>
 
-  <pre id="generate-story">. . .</pre>
+  <pre id="generate-story"></pre>
 
   <!-- Credits -->
   <hr> Transferred to browser demo using <a href="https://github.com/mil-tokyo/webdnn">WebDNN</a> by <a
