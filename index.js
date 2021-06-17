@@ -284,7 +284,8 @@ async function run_generation_sample_data() {
 async function getBHGenerate() {
   let caption = document.getElementById('captions');
   let generateStory = document.getElementById('generate-story');
-  generateStory.textContent = 'composing...';
+  generateStory.innerHTML = 'composing...';
+  // typeWriter(generateStory, 'composing...');
   try {
     // fetch bh generate
     const generatedText = await fetch('/.netlify/functions/generate', {
@@ -293,8 +294,8 @@ async function getBHGenerate() {
         "prompt": caption.textContent,
         "max_tokens": 50,
         "temperature": 1,
-        "k": 0,
-        "p": 0.75
+        "k": 5,
+        "p": 1
       })
     });
 
@@ -303,3 +304,11 @@ async function getBHGenerate() {
     generateStory.textContent = 'Seems like there is no story for this caption. Down to try again';
   }
 }
+
+// function typeWriter(element, text) {
+//   for (let i = 0; i < text.length; i++) {
+//     setTimeout(() => {
+//       element.innerHTML += text.charAt(i);
+//     }, 50);
+//   };
+// }

@@ -45,7 +45,6 @@ footer {
 }
 
 pre {
-    font-family: 'w95 sans serif';
     width: 80%;
     margin: 1rem auto;
 }
@@ -66,29 +65,20 @@ label {
     text-align: left;
 }
 
-.line-1{
-    position: relative;
-    top: 50%;  
-    width: 24em;
-    margin: 0 auto;
-    border-right: 2px solid rgba(255,255,255,.75);
-    font-size: 180%;
-    text-align: center;
-    white-space: nowrap;
+.type-writer{
+    border-right: 2px solid rgb(255, 98, 0);
     overflow: hidden;
-    transform: translateY(-50%);    
+    letter-spacing: .15em;
+    transform: translateY(-50%);
+    animation: typewriter 2s steps(24,end) 1s 1 normal both,
+                blinkTextCursor 1s steps(24,end) infinite normal;
 }
 
-/* Animation */
-.anim-typewriter{
-  animation: typewriter 4s steps(44) 1s 1 normal both,
-             blinkTextCursor 500ms steps(44) infinite normal;
-}
 @keyframes typewriter{
-  from{width: 0;}
-  to{width: 24em;}
+  from {width: 0;}
+  to {width: max-content;}
 }
 @keyframes blinkTextCursor{
-  from{border-right-color: rgba(255,255,255,.75);}
-  to{border-right-color: transparent;}
+  from, to { border-color: transparent }
+  50% { border-color: rgb(255, 98, 0); }
 }
