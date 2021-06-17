@@ -299,9 +299,9 @@ async function getBHGenerate() {
       })
     });
 
-    generateStory.textContent = generatedText.body.text;
+    generateStory.innerHTML = generatedText.body.text;
   } catch (_) {
-    generateStory.textContent = 'Seems like there is no story for this caption. Down to try again';
+    generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again';
   }
 }
 
