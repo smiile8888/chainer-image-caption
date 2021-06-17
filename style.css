@@ -1,0 +1,14 @@
+body {
+    text-align: center;
+}
+.progress {
+    margin-top: 10px;
+}
+
+#sentences {
+    font-size: large;
+}
+#image {
+    width: 640px;
+    height: 480px;
+}

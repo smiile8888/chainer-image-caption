@@ -4,26 +4,17 @@
 <head>
   <meta charset="utf-8">
   <title>Storytelling Generator Demo</title>
+  <link href="./style.css" rel="stylesheet" />
   <script src="./inflate.min.js"></script>
   <script src="./webdnn.js"></script>
   <script src="./index.js"></script>
-
-  <style>
-    .progress {
-      margin-top: 10px;
-    }
-
-    #sentences {
-      font-size: large;
-    }
-  </style>
 </head>
 
 <body>
   <h1>Generating image caption demo</h1>
   Input image (can drag-drop image file):
   <br>
-  <canvas id="image" width="224" height="224"></canvas>
+  <canvas id="image"></canvas>
   <br>
   <input type="file" id="load_local_image">
   <br>
