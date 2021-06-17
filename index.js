@@ -36,8 +36,10 @@ class ImageCaptionGenerator {
     this.word_data = word_data;
 
     let image_in_views = this.runner_image.getInputViews();
+    console.log(image_in_views);
     let image_out_views = this.runner_image.getOutputViews();
     this.view_image_raw_in = image_in_views[0];
+    console.log('view_imag_raw', this.view_image_raw_in);
     this.view_image_feature_out = image_out_views[0];
 
     let cap_in_views = this.runner_caption.getInputViews();
@@ -63,6 +65,7 @@ class ImageCaptionGenerator {
   }
 
   async generate_caption(image_data) {
+    console.log('generate_caption', image_data);
     await set_progress(1);
     console.log('Extracting feature');
     let image_feature = await this.extract_image_feature(image_data);
