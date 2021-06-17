@@ -1,16 +1,57 @@
-body {
-    text-align: center;
-    width: 80%;
-    margin: auto;
+@font-face {
+    font-family: 'w95 sans serif';
+    src: url('./font/w95fa.woff');
 }
 
-img {
+html, body {
+    text-align: center;
+    width: 80%;
+    height: 90vh;
+    margin: auto;
+    font-family: 'w95 sans serif';
+}
+
+button {
+    cursor: pointer;
+    margin: 4px;
+    font-family: 'w95 sans serif';
+    border: 1px solid;
+    border-top-color: #DFDFDF;
+    border-left-color: #DFDFDF;
+    border-bottom-color: #808080;
+    border-right-color: #808080;
+    box-shadow: 1px 1px 0 0 #000;
+    color: #333;
+    background-color: #BFBFBF;
+    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    font-size: large;
+}
+
+canvas {
     width: 720px;
     height: auto;
 }
 
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+}
+
 pre {
+    font-family: 'w95 sans serif';
     width: 80%;
+    margin: 1rem auto;
+}
+
+label {
+    cursor: pointer;
 }
 
 .progress {
@@ -23,4 +64,31 @@ pre {
 
 #generate-story {
     text-align: left;
+}
+
+.line-1{
+    position: relative;
+    top: 50%;  
+    width: 24em;
+    margin: 0 auto;
+    border-right: 2px solid rgba(255,255,255,.75);
+    font-size: 180%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateY(-50%);    
+}
+
+/* Animation */
+.anim-typewriter{
+  animation: typewriter 4s steps(44) 1s 1 normal both,
+             blinkTextCursor 500ms steps(44) infinite normal;
+}
+@keyframes typewriter{
+  from{width: 0;}
+  to{width: 24em;}
+}
+@keyframes blinkTextCursor{
+  from{border-right-color: rgba(255,255,255,.75);}
+  to{border-right-color: transparent;}
 }
