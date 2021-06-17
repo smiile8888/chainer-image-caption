@@ -168,6 +168,7 @@ async function run_generation() {
     bias: [123.68, 116.779, 103.939]
   });
   let sentences = await cap_gen.generate_caption(image_data);
+  console.log('sentences', sentences);
   document.getElementById('sentences').textContent = sentences.join('\n');
 }
 
@@ -215,10 +216,10 @@ window.onload = function () {
   // show initial sample image
   var sample_image = new Image();
   sample_image.onload = function () {
-    ctx.drawImage(sample_image, 0, 0, 224, 224);
+    ctx.drawImage(sample_image, 0, 0, canvas.width, canvas.height);
   };
 
-  sample_image.src = './playground.jpg';
+  sample_image.src = './playground.JPG';
 
   let load_local_image_element = document.getElementById("load_local_image");
   load_local_image_element.addEventListener("change", function (e) {
