@@ -36,10 +36,8 @@ class ImageCaptionGenerator {
     this.word_data = word_data;
 
     let image_in_views = this.runner_image.getInputViews();
-    console.log(image_in_views);
     let image_out_views = this.runner_image.getOutputViews();
     this.view_image_raw_in = image_in_views[0];
-    console.log('view_imag_raw', this.view_image_raw_in);
     this.view_image_feature_out = image_out_views[0];
 
     let cap_in_views = this.runner_caption.getInputViews();
@@ -167,15 +165,13 @@ async function run_generation() {
   console.log('start running');
   let image = document.getElementById('image');
   let image_data = await WebDNN.Image.getImageArray(image, {
-    dstW: image.width,
-    dstH: image.height,
     order: WebDNN.Image.Order.CHW,
     color: WebDNN.Image.Color.BGR,
     bias: [123.68, 116.779, 103.939]
   });
-  let sentences = await cap_gen.generate_caption(image_data);
-  console.log('sentences', sentences);
-  document.getElementById('sentences').textContent = sentences.join('\n');
+  let captions = await cap_gen.generate_caption(image_data);
+  // document.getElementById('captions').textContent = captions.join('\n');
+  document.getElementById('captions').textContent = captions[0];
 }
 
 async function load_models() {
@@ -225,10 +221,10 @@ window.onload = function () {
     ctx.drawImage(sample_image, 0, 0, canvas.width, canvas.height);
   };
 
-  sample_image.src = './playground.JPG';
+  sample_image.src = './playground.jpg';
 
-  let load_local_image_element = document.getElementById("load_local_image");
-  load_local_image_element.addEventListener("change", function (e) {
+  let uploadImage = document.getElementById("upload-image");
+  uploadImage.addEventListener("change", function (e) {
     let file = this.files[0];
     if (file) {
       let image_blob = window.URL.createObjectURL(file);
@@ -236,16 +232,6 @@ window.onload = function () {
     }
   })
 };
-
-// window.onload = () => {
-//   let image = document.getElementById('image');
-//   image.src = './playground.JPG';
-
-//   let uploadedImage = document.getElementById('upload-image');
-//   uploadedImage.addEventListener('change', (e) => {
-//     image.src = URL.createObjectURL(e.target.files[0]);
-//   });
-// };
 
 // for debugging purpose
 let sample_data;
@@ -293,6 +279,29 @@ async function run_generation_sample_data() {
   console.log('start running');
   sample_data = await (await fetch('./image-caption-model/example_io.json')).json();
   console.log('loaded sample');
-  let sentences = await cap_gen.generate_caption_from_image_feature(new Float32Array(sample_data.input_img_embedded));
-  document.getElementById('sentences').textContent = sentences.join('\n');
+  let captions = await cap_gen.generate_caption_from_image_feature(new Float32Array(sample_data.input_img_embedded));
+  document.getElementById('captions').textContent = captions.join('\n');
+}
+
+async function getBHGenerate() {
+  let caption = document.getElementById('captions');
+  let generateStory = document.getElementById('generate-story');
+  generateStory.innerText = 'composing...';
+  try {
+    // fetch bh generate
+    const generatedText = await fetch('/.netlify/functions/generate', {
+      'method': 'POST',
+      'body': JSON.stringify({
+        "prompt": caption,
+        "max_tokens": 70,
+        "temperature": 1,
+        "k": 5,
+        "p": 1
+      })
+    });
+
+    generateStory.innerHTML = generatedText.body
+  } catch (_) {
+    generateStory.innerHTML = 'Seems like there is no story for this caption. Try again ';
+  }
 }
