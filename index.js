@@ -162,7 +162,10 @@ class ImageCaptionGenerator {
 
 async function run_generation() {
   console.log('start running');
-  let image_data = await WebDNN.Image.getImageArray(document.getElementById('image'), {
+  let image = document.getElementById('image');
+  let image_data = await WebDNN.Image.getImageArray(image, {
+    dstW: image.width,
+    dstH: image.height,
     order: WebDNN.Image.Order.CHW,
     color: WebDNN.Image.Color.BGR,
     bias: [123.68, 116.779, 103.939]
@@ -232,7 +235,7 @@ async function load_models() {
 // };
 
 window.onload = () => {
-  var image = document.getElementById('image');
+  let image = document.getElementById('image');
   image.src = './playground.JPG';
 
   let uploadedImage = document.getElementById('upload-image');
