@@ -1,0 +1,26 @@
+{
+  "name": "chainer-image-caption",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "start": "sirv ./ -p 3000 -s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smiile8888/chainer-image-caption.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smiile8888/chainer-image-caption/issues"
+  },
+  "homepage": "https://github.com/smiile8888/chainer-image-caption#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "sirv-cli": "^1.0.12"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0"
+  }
+}
