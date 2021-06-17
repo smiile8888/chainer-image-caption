@@ -63,7 +63,6 @@ class ImageCaptionGenerator {
   }
 
   async generate_caption(image_data) {
-    console.log('generate_caption', image_data);
     await set_progress(1);
     console.log('Extracting feature');
     let image_feature = await this.extract_image_feature(image_data);
@@ -98,7 +97,6 @@ class ImageCaptionGenerator {
         break;
       }
     }
-
 
     let sentence_strs = [];
     for (let i = 0; i < this.beam_stack.length; i++) {
@@ -286,22 +284,22 @@ async function run_generation_sample_data() {
 async function getBHGenerate() {
   let caption = document.getElementById('captions');
   let generateStory = document.getElementById('generate-story');
-  generateStory.innerText = 'composing...';
+  generateStory.textContent = 'composing...';
   try {
     // fetch bh generate
     const generatedText = await fetch('/.netlify/functions/generate', {
       'method': 'POST',
       'body': JSON.stringify({
         "prompt": caption.textContent,
-        "max_tokens": 70,
+        "max_tokens": 50,
         "temperature": 1,
-        "k": 5,
-        "p": 1
+        "k": 0,
+        "p": 0.75
       })
     });
 
-    generateStory.innerHTML = generatedText.body
+    generateStory.textContent = generatedText.body.text;
   } catch (_) {
-    generateStory.innerHTML = 'Seems like there is no story for this caption. Try again ';
+    generateStory.textContent = 'Seems like there is no story for this caption. Down to try again';
   }
 }
