@@ -1,6 +1,6 @@
 const axios = require('axios');
-const env = require('dotenv');
-env.config();
+require('dotenv').config();
+
 const key = process.env.COHERE_API_KEY
 
 const handler = async (event) => {
@@ -9,7 +9,7 @@ const handler = async (event) => {
     try {
         const response = await axios({
             method: 'post',
-            url: 'https://api.cohere.ai/baseline-orca/generate',
+            url: 'https://api.cohere.ai/baseline-shark/generate',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${key}`
