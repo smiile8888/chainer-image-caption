@@ -299,6 +299,8 @@ async function getBHGenerate() {
       })
     });
 
+    console.log(generateText);
+
     generateStory.innerHTML = generatedText.body.text;
   } catch (_) {
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again';
