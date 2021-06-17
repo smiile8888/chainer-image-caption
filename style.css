@@ -1,9 +1,16 @@
 body {
     text-align: center;
+    width: 80%;
+    margin: auto;
+}
+
+img {
+    width: 720px;
+    height: auto;
 }
 
 pre {
-    text-align: left;
+    width: 80%;
 }
 
 .progress {
@@ -13,7 +20,7 @@ pre {
 #sentences {
     font-size: large;
 }
-#image {
-    width: 640px;
-    height: 480px;
+
+#generate-story {
+    text-align: left;
 }
