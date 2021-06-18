@@ -286,27 +286,48 @@ async function getBHGenerate() {
   let generateStory = document.getElementById('generate-story');
   generateStory.innerHTML = 'composing...';
   // typeWriter(generateStory, 'composing...');
+
+  const requestBody = JSON.stringify({
+    "prompt": caption.textContent,
+    "max_tokens": 50,
+    "temperature": 1,
+    "k": 5,
+    "p": 1
+  });
+
+  // const response = await getGenerate(request);
+
   try {
     // fetch bh generate
-    await fetch('/.netlify/functions/generate', {
-      'method': 'POST',
-      'body': JSON.stringify({
-        "prompt": caption.textContent,
-        "max_tokens": 50,
-        "temperature": 1,
-        "k": 5,
-        "p": 1
-      })
-    }).then((response) => {
-      console.log(response.json());
-      // console.log(JSON.parse(response.body).text);
+    // const response = await fetch('/.netlify/functions/generate', {
+    //   'method': 'POST',
+    //   'body': JSON.stringify({
+    //     "prompt": caption.textContent,
+    //     "max_tokens": 50,
+    //     "temperature": 1,
+    //     "k": 5,
+    //     "p": 1
+    //   })
+    // });
+
+    // console.log(response);
+
+    // const result = await JSON.parse(response.body);
+
+    // console.log(result);
+
+    const response = await fetch('https://api.cohere.ai/baseline-shark/generate', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer 7MPL4JgXAOdkNHAdfkGxCwU4dUq7iR53kLiKQraW`
+      },
+      body: requestBody,
     });
 
-    // console.log(generatedText);
-
-    // generateStory.innerHTML = generatedText.body.text;
+    const result = await response.json();
+    generateStory.innerHTML = result.text + '...';
   } catch (error) {
-    console.log(error);
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again';
   }
 }
