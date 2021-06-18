@@ -219,7 +219,7 @@ window.onload = function () {
     ctx.drawImage(sample_image, 0, 0, canvas.width, canvas.height);
   };
 
-  sample_image.src = './playground.jpg';
+  sample_image.src = './assets/img/playground.jpg';
 
   let uploadImage = document.getElementById("upload-image");
   uploadImage.addEventListener("change", function (e) {
