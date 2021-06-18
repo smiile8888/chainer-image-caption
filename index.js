@@ -319,9 +319,7 @@ async function getBHGenerate() {
       })
     });
 
-    console.log(await response.text());
-
-    const result = JSON.parse(await response.text());
+    const result = await response.text();
     generateStory.innerHTML = result.text + '...';
   } catch (error) {
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again 🧐';
