@@ -288,7 +288,7 @@ async function getBHGenerate() {
   // typeWriter(generateStory, 'composing...');
   try {
     // fetch bh generate
-    const generatedText = await fetch('/.netlify/functions/generate', {
+    const { body: { text: generatedText } } = await fetch('/.netlify/functions/generate', {
       'method': 'POST',
       'body': JSON.stringify({
         "prompt": caption.textContent,
@@ -301,7 +301,7 @@ async function getBHGenerate() {
 
     console.log(generatedText);
 
-    generateStory.innerHTML = generatedText.body.text;
+    // generateStory.innerHTML = generatedText.body.text;
   } catch (_) {
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again';
   }
