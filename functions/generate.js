@@ -4,8 +4,6 @@ require('dotenv').config();
 const key = process.env.COHERE_API_KEY
 
 const handler = async (event) => {
-    console.log(event);
-    console.log(key);
     try {
         const response = await axios({
             method: 'post',
