@@ -36,8 +36,9 @@ button {
 }
 
 canvas {
-    width: 720px;
+    width: 100%;
     height: auto;
+    margin-bottom: 1rem;
 }
 
 footer {
@@ -48,7 +49,7 @@ footer {
     padding: 1rem 0;
 }
 
-pre {
+p {
     width: 80%;
     margin: 1rem auto;
     white-space: pre-wrap;       /* Since CSS 2.1 */
