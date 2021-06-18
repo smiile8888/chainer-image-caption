@@ -18,9 +18,11 @@
   "homepage": "https://github.com/smiile8888/chainer-image-caption#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "node-fetch": "^2.6.1",
     "sirv-cli": "^1.0.12"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "netlify-cli": "^3.37.37"
   }
 }
