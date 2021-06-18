@@ -314,8 +314,8 @@ async function getBHGenerate() {
         "prompt": caption.textContent,
         "max_tokens": 50,
         "temperature": 1,
-        "k": 5,
-        "p": 1
+        "k": 0,
+        "p": 0.75
       })
     });
 
