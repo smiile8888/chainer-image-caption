@@ -281,6 +281,25 @@ async function run_generation_sample_data() {
   document.getElementById('captions').textContent = captions.join('\n');
 }
 
+async function getCaption() {
+  let uploadImage = document.getElementById('upload-image');
+
+  try {
+    const response = await fetch('', {
+      method: 'POST',
+      headers: {
+        "Content-type": uploadImage[0].type,
+      },
+      body: uploadImage[0],
+    });
+
+    const results = await response.json();
+    return results;
+  } catch (error) {
+    return ''
+  }
+}
+
 async function getBHGenerate() {
   let caption = document.getElementById('captions');
   let generateStory = document.getElementById('generate-story');
