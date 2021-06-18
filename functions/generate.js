@@ -17,6 +17,11 @@ const handler = async (event) => {
         return {
             statusCode: response.status,
             body: JSON.stringify(response.data),
+            headers: {
+                'Access-Control-Allow-Origin': 'thesmile.me',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTION',
+            },
         };
     } catch (error) {
         return {
