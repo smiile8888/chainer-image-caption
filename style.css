@@ -7,8 +7,12 @@ html, body {
     text-align: center;
     width: 80%;
     height: 90vh;
-    margin: auto;
+    margin: 16px auto;
     font-family: 'w95 sans serif';
+}
+
+h1, h3 {
+    letter-spacing: 0.15em;
 }
 
 button {

@@ -347,7 +347,7 @@ async function getBHGenerate() {
     const result = await response.json();
     generateStory.innerHTML = result.text + '...';
   } catch (error) {
-    generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again';
+    generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again 🧐';
   }
 }
 
