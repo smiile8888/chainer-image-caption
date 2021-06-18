@@ -298,13 +298,15 @@ async function getBHGenerate() {
         "p": 1
       })
     }).then((response) => {
+      console.log(response.body);
       console.log(JSON.parse(response.body).text);
     });
 
     // console.log(generatedText);
 
     // generateStory.innerHTML = generatedText.body.text;
-  } catch (_) {
+  } catch (error) {
+    console.log(error);
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again';
   }
 }

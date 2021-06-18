@@ -16,7 +16,7 @@ const handler = async (event) => {
         })
         return {
             statusCode: response.status,
-            body: JSON.stringify(response.data),
+            body: response.data,
         }
     } catch (error) {
         let status = error && error.response ? error.response.status : 500
