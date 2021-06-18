@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "http://thesmile.me/chainer-image-caption/"
   status = 200
 
 [functions]
