@@ -299,7 +299,7 @@ async function getBHGenerate() {
       })
     });
 
-    console.log(generateText);
+    console.log(generatedText);
 
     generateStory.innerHTML = generatedText.body.text;
   } catch (_) {
