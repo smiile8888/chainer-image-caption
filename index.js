@@ -319,23 +319,10 @@ async function getBHGenerate() {
       })
     });
 
-    // console.log(await response.text());
+    console.log(await response.text());
 
-    // const result = await JSON.parse(response.body);
-
-    // console.log(result);
-
-    // const response = await fetch('https://api.cohere.ai/baseline-shark/generate', {
-    //   method: 'post',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer 7MPL4JgXAOdkNHAdfkGxCwU4dUq7iR53kLiKQraW`
-    //   },
-    //   body: requestBody,
-    // });
-
-    // const result = JSON.parse(await response.text());
-    // generateStory.innerHTML = result.text + '...';
+    const result = JSON.parse(await response.text());
+    generateStory.innerHTML = result.text + '...';
   } catch (error) {
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again 🧐';
   }
