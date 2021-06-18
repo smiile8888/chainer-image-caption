@@ -1,6 +1,11 @@
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "http://thesmile.me"
+
 [[redirects]]
   from = "/*"
-  to = "http://thesmile.me/chainer-image-caption/"
+  to = "/index.html"
   status = 200
 
 [functions]
