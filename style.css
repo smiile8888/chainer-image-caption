@@ -4,10 +4,10 @@
 }
 
 html, body {
+    overflow: scroll;
     text-align: center;
-    width: 80%;
-    height: 90vh;
-    margin: 16px auto;
+    height: 93vh;
+    /* margin: 16px auto 0 auto; */
     font-family: 'w95 sans serif';
 }
 
@@ -37,6 +37,7 @@ button {
 
 canvas {
     width: 100%;
+    max-width: 720px;
     height: auto;
     margin-bottom: 1rem;
 }
@@ -50,7 +51,7 @@ footer {
 }
 
 p {
-    width: 80%;
+    width: 60%;
     margin: 1rem auto;
     white-space: pre-wrap;       /* Since CSS 2.1 */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
