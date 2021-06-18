@@ -281,10 +281,7 @@ async function run_generation_sample_data() {
   document.getElementById('captions').textContent = captions.join('\n');
 }
 
-function convertImgToBase64(image) {
-
-}
-
+// TODO: call captioning model
 async function getCaption() {
   let uploadImage = document.getElementById('upload-image');
 
@@ -308,29 +305,18 @@ async function getBHGenerate() {
   let caption = document.getElementById('captions');
   let generateStory = document.getElementById('generate-story');
   generateStory.innerHTML = 'composing...';
-  // typeWriter(generateStory, 'composing...');
-
-  const requestBody = JSON.stringify({
-    "prompt": caption.textContent,
-    "max_tokens": 50,
-    "temperature": 1,
-    "k": 0,
-    "p": 0.75
-  });
-
-  // const response = await getGenerate(request);
 
   try {
     // fetch bh generate
     const response = await fetch('/.netlify/functions/generate', {
       'method': 'POST',
-      'body': JSON.stringify({
+      'body': {
         "prompt": caption.textContent,
         "max_tokens": 50,
         "temperature": 1,
         "k": 5,
         "p": 1
-      })
+      }
     });
 
     console.log(await response.text());
