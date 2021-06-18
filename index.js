@@ -288,7 +288,7 @@ async function getBHGenerate() {
   // typeWriter(generateStory, 'composing...');
   try {
     // fetch bh generate
-    const { body: { text: generatedText } } = await fetch('/.netlify/functions/generate', {
+    await fetch('/.netlify/functions/generate', {
       'method': 'POST',
       'body': JSON.stringify({
         "prompt": caption.textContent,
@@ -297,9 +297,11 @@ async function getBHGenerate() {
         "k": 5,
         "p": 1
       })
+    }).then((response) => {
+      console.log(response.body.text);
     });
 
-    console.log(generatedText);
+    // console.log(generatedText);
 
     // generateStory.innerHTML = generatedText.body.text;
   } catch (_) {
