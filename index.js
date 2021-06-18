@@ -310,16 +310,16 @@ async function getBHGenerate() {
     // fetch bh generate
     const response = await fetch('/.netlify/functions/generate', {
       'method': 'POST',
-      'body': {
+      'body': JSON.stringify({
         "prompt": caption.textContent,
         "max_tokens": 50,
         "temperature": 1,
         "k": 5,
         "p": 1
-      }
+      })
     });
 
-    console.log(await response.text());
+    // console.log(await response.text());
 
     // const result = await JSON.parse(response.body);
 
@@ -334,8 +334,8 @@ async function getBHGenerate() {
     //   body: requestBody,
     // });
 
-    const result = JSON.parse(await response.text());
-    generateStory.innerHTML = result.text + '...';
+    // const result = JSON.parse(await response.text());
+    // generateStory.innerHTML = result.text + '...';
   } catch (error) {
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again 🧐';
   }
