@@ -298,7 +298,7 @@ async function getBHGenerate() {
         "p": 1
       })
     }).then((response) => {
-      console.log(response.body.text);
+      console.log(JSON.parse(response.body).text);
     });
 
     // console.log(generatedText);

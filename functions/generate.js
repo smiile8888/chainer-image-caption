@@ -20,7 +20,10 @@ const handler = async (event) => {
         }
     } catch (error) {
         let status = error && error.response ? error.response.status : 500
-        return { statusCode: status, body: error.message }
+        return {
+            statusCode: status,
+            body: error.message,
+        }
     }
 }
 
