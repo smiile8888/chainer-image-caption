@@ -5,27 +5,19 @@ const key = process.env.COHERE_API_KEY
 
 const handler = async (event) => {
     try {
-        const response = await fetch('https://api.cohere.ai/baseline-shark/generate', {
-            method: 'POST',
+        const response = await axios({
+            method: 'post',
+            url: 'https://api.cohere.ai/baseline-shark/generate',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${key}`
             },
-            body: event.body
-        });
-        // const response = await axios('{
-        //     method: 'post',
-        //     url: 'https://api.cohere.ai/baseline-shark/generate',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': `Bearer ${key}`
-        //     },
-        //     data: event.body
-        // });
+            data: event.body
+        })
 
         return {
             statusCode: response.status,
-            body: JSON.stringify(response.body),
+            body: JSON.stringify(response.data),
         }
     } catch (error) {
         let status = error && error.response ? error.response.status : 500
