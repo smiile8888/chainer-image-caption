@@ -320,6 +320,7 @@ async function getBHGenerate() {
     });
 
     const result = await response.text();
+    console.log(result);
     generateStory.innerHTML = result.text + '...';
   } catch (error) {
     generateStory.innerHTML = 'Seems like there is no story for this caption. Down to try again 🧐';
